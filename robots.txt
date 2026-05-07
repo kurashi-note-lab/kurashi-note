@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://kurashi-note-lab.github.io/kurashi-note/sitemap.xml
