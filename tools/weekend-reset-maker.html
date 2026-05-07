@@ -1,0 +1,214 @@
+﻿<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="部屋の状態と使える時間から、週末リセットの候補手順を作るローカル静的ツールです。">
+  <title>週末15分リセット手順メーカー</title>
+  <style>
+    :root { --bg:#f7f5f0; --panel:#fffdf8; --text:#25231f; --muted:#69645b; --line:#ddd6c8; --accent:#2f6f63; --soft:#e9f1ed; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color:var(--text); background:var(--bg); line-height:1.7; }
+    header, main, footer { max-width: 980px; margin: 0 auto; padding: 20px; }
+    header { padding-top: 32px; }
+    h1 { font-size: clamp(1.6rem, 5vw, 2.6rem); line-height:1.25; margin:0 0 10px; letter-spacing:0; }
+    h2 { font-size:1.2rem; margin:0 0 14px; }
+    p { margin: 0 0 12px; }
+    .lead { color:var(--muted); max-width: 720px; }
+    .grid { display:grid; grid-template-columns: minmax(0, 1fr); gap:18px; }
+    @media (min-width: 800px) { .grid { grid-template-columns: 0.95fr 1.05fr; align-items:start; } }
+    section { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:18px; }
+    label { display:block; font-weight:700; margin: 12px 0 6px; }
+    select, input[type="text"] { width:100%; min-height:44px; padding:9px 10px; border:1px solid var(--line); border-radius:6px; background:#fff; color:var(--text); font:inherit; }
+    .seg { display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin-top:6px; }
+    .seg label { margin:0; font-weight:600; }
+    .seg input { position:absolute; opacity:0; }
+    .seg span { display:block; text-align:center; border:1px solid var(--line); border-radius:6px; padding:9px; background:#fff; cursor:pointer; }
+    .seg input:checked + span { border-color:var(--accent); background:var(--soft); color:#174b42; }
+    .checks label { display:flex; align-items:flex-start; gap:8px; font-weight:500; margin:8px 0; }
+    button { min-height:44px; border:0; border-radius:6px; background:var(--accent); color:white; padding:10px 14px; font:inherit; font-weight:700; cursor:pointer; }
+    button.secondary { background:#514d46; }
+    button:focus, input:focus, select:focus { outline:3px solid #b8d8d0; outline-offset:2px; }
+    .actions { display:flex; flex-wrap:wrap; gap:10px; margin-top:16px; }
+    .error { color:#8a2e1f; font-weight:700; min-height:1.5em; }
+    .result-title { font-size:1.25rem; font-weight:800; margin-bottom:6px; }
+    .meta { color:var(--muted); font-size:0.95rem; }
+    ol { padding-left:1.4rem; }
+    li { margin-bottom:8px; }
+    .step-min { color:var(--muted); font-size:0.9rem; }
+    .guard { background:#fff5df; border:1px solid #ead7a7; padding:12px; border-radius:6px; margin:12px 0; }
+    textarea { width:100%; min-height:190px; border:1px solid var(--line); border-radius:6px; padding:10px; font:inherit; background:#fff; }
+    .fallback { font-size:0.95rem; color:var(--muted); }
+    noscript { display:block; max-width:980px; margin:20px auto; padding:16px; background:#fff4df; border:1px solid #dfc071; border-radius:8px; }
+    footer { color:var(--muted); font-size:0.92rem; }
+    .print-only { display:none; }
+    @media print {
+      body { background:#fff; color:#000; }
+      header, .input-panel, .actions, footer, .no-print { display:none !important; }
+      main { padding:0; max-width:none; }
+      .grid { display:block; }
+      section { border:0; padding:0; }
+      .print-only { display:block; }
+      textarea { border:0; min-height:auto; }
+    }
+  </style>
+</head>
+<body>
+<noscript>このツールは入力に応じて手順を作るためJavaScriptを使います。JavaScriptを無効にしている場合は、記事内の「週末15分リセットチェックリスト」をご利用ください。</noscript>
+<header>
+  <h1>週末15分リセット手順メーカー</h1>
+  <p class="lead">部屋の状態と使える時間を選ぶと、今日の候補手順を小さくまとめます。外部通信は使わず、このページ内だけで動きます。</p>
+</header>
+<main class="grid">
+  <section class="input-panel" aria-labelledby="input-title">
+    <h2 id="input-title">入力</h2>
+    <label for="room_type">場所</label>
+    <select id="room_type">
+      <option value="living">リビング</option>
+      <option value="desk">机まわり</option>
+      <option value="bedroom">寝室</option>
+      <option value="kitchen">台所まわり</option>
+      <option value="entryway">玄関</option>
+      <option value="other">その他</option>
+    </select>
+    <label>使える時間</label>
+    <div class="seg" role="radiogroup" aria-label="使える時間">
+      <label><input type="radio" name="time_available" value="5"><span>5分</span></label>
+      <label><input type="radio" name="time_available" value="10"><span>10分</span></label>
+      <label><input type="radio" name="time_available" value="15" checked><span>15分</span></label>
+    </div>
+    <label for="main_problem">いちばん気になること</label>
+    <select id="main_problem">
+      <option value="floor">床に物がある</option>
+      <option value="desk">机やテーブルが散らかっている</option>
+      <option value="laundry">洗濯物がある</option>
+      <option value="dishes">食器が残っている</option>
+      <option value="papers">書類や郵便物がある</option>
+      <option value="mixed">全体的に散らかっている</option>
+    </select>
+    <label for="energy_level">今日の体力</label>
+    <select id="energy_level">
+      <option value="normal">ふつう</option>
+      <option value="low">少なめ</option>
+    </select>
+    <div class="checks">
+      <label><input type="checkbox" id="include_next_day_prep" checked> 最後に次の日の準備を入れる</label>
+      <label><input type="checkbox" id="include_laundry"> 洗濯物の整理を入れる</label>
+      <label><input type="checkbox" id="include_papers"> 書類をまとめる手順を入れる</label>
+    </div>
+    <label for="memo">メモ 80文字以内（個人情報は入れない）</label>
+    <input id="memo" type="text" maxlength="80" placeholder="例: 月曜に見る物">
+    <p id="error" class="error" aria-live="polite"></p>
+    <div class="actions">
+      <button id="generate" type="button">手順を作る</button>
+      <button id="copy" type="button" class="secondary">コピー</button>
+      <button id="print" type="button" class="secondary">印刷</button>
+    </div>
+    <p id="copy_status" class="fallback" aria-live="polite">コピーできない場合は、下のテキスト欄を手動で選択してください。</p>
+  </section>
+  <section aria-labelledby="result-title">
+    <h2 id="result-heading">出力</h2>
+    <div id="result">
+      <p class="meta">入力を選んで「手順を作る」を押してください。</p>
+    </div>
+    <label for="copy_text" class="no-print">コピペ用テキスト</label>
+    <textarea id="copy_text" readonly class="no-print"></textarea>
+  </section>
+</main>
+<footer>
+  <p>ローカル静的ツールです。外部送信、保存、分析、アカウント連携は行いません。個人情報は入力しないでください。</p>
+</footer>
+<script>
+(function(){
+  'use strict';
+  var roomNames = { living:'リビング', desk:'机まわり', bedroom:'寝室', kitchen:'台所まわり', entryway:'玄関', other:'部屋' };
+  var firstSteps = {
+    floor:{ label:'床にある物だけを拾う', minutes:3 },
+    desk:{ label:'机やテーブルの上を一時置き場へ集める', minutes:4 },
+    laundry:{ label:'洗濯物を洗濯かごへまとめる', minutes:3 },
+    dishes:{ label:'食器を台所へ移動する', minutes:3 },
+    papers:{ label:'書類や郵便物をひとつのトレーへ集める', minutes:3 },
+    mixed:{ label:'床にある物から見える範囲だけ拾う', minutes:3 }
+  };
+  function value(id){ return document.getElementById(id).value; }
+  function checked(id){ return document.getElementById(id).checked; }
+  function selectedTime(){ return Number(document.querySelector('input[name="time_available"]:checked').value); }
+  function uniqSteps(steps){
+    var seen = {}; return steps.filter(function(s){ if(seen[s.label]) return false; seen[s.label]=true; return true; });
+  }
+  function plannedMinutes(time, count){
+    var plans = {
+      5: [2, 2, 1],
+      10: [3, 3, 2, 2],
+      15: [4, 4, 3, 2, 2]
+    };
+    var selected = (plans[time] || plans[15]).slice(0, count);
+    var total = selected.reduce(function(sum, minutes){ return sum + minutes; }, 0);
+    while(total > time && selected.length){
+      var index = selected.indexOf(Math.max.apply(null, selected));
+      selected[index] -= 1;
+      total -= 1;
+    }
+    return selected;
+  }
+  function buildSteps(input){
+    var steps = [firstSteps[input.main_problem] || firstSteps.mixed];
+    if(input.include_laundry) steps.push({label:'洗濯物を洗濯かごへまとめる'});
+    if(input.include_papers) steps.push({label:'書類や郵便物をひとつの場所へ集める'});
+    steps.push({label:'ゴミ、洗濯物、食器など行き先が決まっている物を戻す'});
+    if(input.time >= 10) steps.push({label:'机やテーブルに使える面を作る'});
+    if(input.include_next_day_prep) steps.push({label:'鍵、バッグ、充電する物など次に使う物を見える場所へ置く'});
+    steps.push({label:'次回見る場所を1つだけメモする'});
+    steps = uniqSteps(steps);
+    var max = input.time === 5 ? 3 : input.time === 10 ? 4 : 5;
+    if(input.energy === 'low') max = Math.max(3, max - 1);
+    steps = steps.slice(0, max);
+    var minutes = plannedMinutes(input.time, steps.length);
+    return steps.map(function(step, index){ return { label: step.label, minutes: minutes[index] }; });
+  }
+  function guard(input){
+    if(input.energy === 'low') return '今日は細かい分類をしない。迷う物はあとで見る箱へ入れる。';
+    if(input.main_problem === 'papers') return '今日は保管期間や処分の判断を急がない。まず一か所に集める。';
+    if(input.main_problem === 'desk') return '今日は引き出しの中を開けない。机の上だけを見る。';
+    return '今日は棚や収納の中を開けない。見える範囲だけ整える。';
+  }
+  function render(){
+    var memo = value('memo');
+    var error = document.getElementById('error');
+    if(memo.length > 80){ error.textContent = 'メモは80文字以内にしてください。'; return; }
+    error.textContent = '';
+    var input = { room:value('room_type'), time:selectedTime(), main_problem:value('main_problem'), energy:value('energy_level'), include_next_day_prep:checked('include_next_day_prep'), include_laundry:checked('include_laundry'), include_papers:checked('include_papers'), memo:memo };
+    var steps = buildSteps(input);
+    var title = input.time + '分リセット: ' + roomNames[input.room];
+    var scope = guard(input);
+    var totalMinutes = steps.reduce(function(sum, step){ return sum + step.minutes; }, 0);
+    var html = '<div class="result-title">' + title + '</div><p class="meta">所要時間: 約' + totalMinutes + '分 / 選択上限: ' + input.time + '分 / 手順数: ' + steps.length + '</p><ol>';
+    steps.forEach(function(s){ html += '<li><label><input type="checkbox"> ' + s.label + ' <span class="step-min">約' + s.minutes + '分</span></label></li>'; });
+    html += '</ol><div class="guard"><strong>今日はやらないこと:</strong><br>' + scope + '</div>';
+    if(memo){ html += '<p><strong>メモ:</strong> ' + memo.replace(/[<>]/g,'') + '</p>'; }
+    document.getElementById('result').innerHTML = html;
+    var text = title + '\n所要時間: 約' + totalMinutes + '分（選択上限: ' + input.time + '分）\n\n' + steps.map(function(s,i){ return (i+1) + '. ' + s.label + ' 約' + s.minutes + '分'; }).join('\n') + '\n\n今日はやらないこと: ' + scope + (memo ? '\n\nメモ: ' + memo : '');
+    document.getElementById('copy_text').value = text;
+  }
+  function copyText(){
+    var target = document.getElementById('copy_text');
+    var status = document.getElementById('copy_status');
+    if(!target.value) render();
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(target.value).then(function(){ status.textContent = 'コピーしました。'; }).catch(function(){ target.focus(); target.select(); status.textContent = '自動コピーできませんでした。テキスト欄を手動でコピーしてください。'; });
+    } else {
+      target.focus(); target.select(); status.textContent = 'この環境では手動コピーを使ってください。';
+    }
+  }
+  document.getElementById('generate').addEventListener('click', render);
+  document.getElementById('copy').addEventListener('click', copyText);
+  document.getElementById('print').addEventListener('click', function(){ window.print(); });
+  render();
+})();
+</script>
+</body>
+</html>
+
+
+
+
+
