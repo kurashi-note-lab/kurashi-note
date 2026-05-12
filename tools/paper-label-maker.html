@@ -49,7 +49,7 @@
     <label for="review_day">次に見る日</label>
     <select id="review_day">
       <option value="今週末">今週末</option>
-      <option value="日曜の夜">日曜の夜</option>
+      <option value="日曜の夕方">日曜の夕方</option>
       <option value="月末">月末</option>
       <option value="月初">月初</option>
       <option value="未定">未定</option>
@@ -74,19 +74,19 @@
   <section class="card" aria-labelledby="output-title">
     <h2 id="output-title">出力</h2>
     <div id="labels" class="label-sheet"></div>
-    <label for="copy_text" class="no-print">コピペ用テキスト</label>
+    <label for="copy_text" class="no-print">コピー用テキスト</label>
     <textarea id="copy_text" readonly class="no-print"></textarea>
   </section>
 </main>
 <footer>
   <p><a href="../index.html">トップへ戻る</a><a href="../privacy.html">プライバシー方針</a><a href="../disclaimer.html">免責事項</a></p>
-  <p>このツールはブラウザ内だけで動く静的ページです。入力内容は送信・保存されません。</p>
+  <p>このツールはブラウザ内だけで動く静的ページです。入力内容は送信、保存されません。</p>
 </footer>
 <script>
 (function(){
   'use strict';
   var boxes = [
-    { title: '今すぐ対応', examples: '提出 / 支払い / 返信 / 記入', action: '次にやることを書く' },
+    { title: '今すぐ対応', examples: '支払い / 返信 / 提出 / 記入', action: '次にやることを書く' },
     { title: '保管', examples: '保証書 / 契約書 / 取扱説明書 / 残す書類', action: '保管場所を決める' },
     { title: '確認待ち', examples: '迷う書類 / 期限不明 / 内容確認が必要な紙', action: '次に見る日を決める' }
   ];
