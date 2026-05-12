@@ -22,108 +22,108 @@
   </style>
 </head>
 <body>
-  <header>
-    <div class="brand"><a href="../index.html">暮らしの小さな整理ノート</a></div>
-    <h1>サブスク更新メモ作成ツール</h1>
-    <p class="lead">定期購入、アプリ、保険以外の一般サービスなど、見直し日を忘れやすい契約の確認メモを作ります。金額の判断や契約判断は扱いません。</p>
-    <nav class="nav" aria-label="関連ページ">
-      <a href="../categories/life-admin.html">生活管理へ</a>
-      <a href="../articles/paper-sorting-three-box-rule.html">書類整理の記事へ</a>
-      <a href="../tools/paper-label-maker.html">書類ラベル作成へ</a>
-    </nav>
-  </header>
-  <main class="tool-grid">
-    <section class="card input-panel" aria-labelledby="input-title">
-      <h2 id="input-title">入力</h2>
-      <label for="service">サービス名</label>
-      <input id="service" type="text" maxlength="40" placeholder="例: 動画サービス、定期便、アプリ">
-      <label for="renewal">次の更新時期</label>
-      <input id="renewal" type="text" maxlength="40" placeholder="例: 6月末、毎月25日、年1回">
-      <label for="owner">確認する人</label>
-      <input id="owner" type="text" maxlength="30" placeholder="例: 自分、家族で確認">
-      <label for="place">確認場所</label>
-      <select id="place">
-        <option value="家計メモ">家計メモ</option>
-        <option value="カレンダー">カレンダー</option>
-        <option value="メール検索">メール検索</option>
-        <option value="アプリ内設定">アプリ内設定</option>
-        <option value="書類トレー">書類トレー</option>
-      </select>
-      <div class="checks">
-        <label><input id="include_cancel" type="checkbox" checked> 解約方法の確認欄を入れる</label>
-        <label><input id="include_family" type="checkbox"> 家族確認の欄を入れる</label>
-      </div>
-      <div class="actions">
-        <button id="generate" type="button">メモを作る</button>
-        <button id="copy" type="button" class="secondary">コピー</button>
-        <button id="print" type="button" class="secondary">印刷</button>
-      </div>
-      <p id="status" class="small" aria-live="polite">ID、パスワード、カード番号、契約番号は入力しないでください。</p>
-    </section>
-    <section class="card" aria-labelledby="output-title">
-      <h2 id="output-title">出力</h2>
-      <div id="preview" class="memo-box"></div>
-      <label for="copy_text" class="no-print">コピペ用テキスト</label>
-      <textarea id="copy_text" readonly class="no-print"></textarea>
-      <p class="note">このページは一般的な更新メモを作るだけです。契約、解約、支払い、保険、税金、投資などの判断は、公式案内や専門家の案内を確認してください。</p>
-    </section>
-  </main>
-  <footer>
-    <p><a href="../index.html">トップへ戻る</a><a href="../privacy.html">プライバシー方針</a><a href="../disclaimer.html">免責事項</a></p>
-    <p>このツールはブラウザ内だけで動く静的ページです。入力内容は送信、保存されません。</p>
-  </footer>
-  <script>
-    (function(){
-      'use strict';
-      function value(id){return document.getElementById(id).value.trim()}
-      function checked(id){return document.getElementById(id).checked}
-      function escapeHtml(text){return text.replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
-      function render(){
-        var service=value('service')||'サービス名を書く';
-        var renewal=value('renewal')||'次の更新時期を書く';
-        var owner=value('owner')||'確認する人を書く';
-        var place=value('place');
-        var lines=[
-          'サブスク更新メモ',
-          'サービス: '+service,
-          '次の更新時期: '+renewal,
-          '確認する人: '+owner,
-          '確認場所: '+place,
-          '確認すること:',
-          '- 今も使っているか',
-          '- 料金やプラン名を公式画面で確認したか',
-          '- 更新前に見直す日を決めたか'
-        ];
-        if(checked('include_cancel'))lines.push('- 解約方法や締切を公式案内で確認したか');
-        if(checked('include_family'))lines.push('- 家族や共有利用者に確認したか');
-        lines.push('メモ: 契約番号や支払い情報はここに書かない');
-        var html='<h2>'+escapeHtml(service)+'</h2><ul>';
-        lines.slice(2).forEach(function(line){
-          if(line==='確認すること:'){html+='</ul><h3>確認すること</h3><ul>'}
-          else if(line.indexOf('- ')===0){html+='<li>'+escapeHtml(line.slice(2))+'</li>'}
-          else{html+='<li>'+escapeHtml(line)+'</li>'}
-        });
-        html+='</ul>';
-        document.getElementById('preview').innerHTML=html;
-        document.getElementById('copy_text').value=lines.join('\n');
-      }
-      function copyText(){
-        var target=document.getElementById('copy_text');
-        var status=document.getElementById('status');
-        if(!target.value)render();
-        if(navigator.clipboard&&navigator.clipboard.writeText){
-          navigator.clipboard.writeText(target.value).then(function(){status.textContent='コピーしました。'}).catch(function(){target.focus();target.select();status.textContent='自動コピーできませんでした。テキスト欄を手動でコピーしてください。'})
-        }else{
-          target.focus();
-          target.select();
-          status.textContent='この環境では手動コピーを使ってください。';
-        }
-      }
-      document.getElementById('generate').addEventListener('click',render);
-      document.getElementById('copy').addEventListener('click',copyText);
-      document.getElementById('print').addEventListener('click',function(){window.print()});
-      render();
-    })();
-  </script>
+<header>
+  <div class="brand"><a href="../index.html">暮らしの小さな整理ノート</a></div>
+  <h1>サブスク更新メモ作成ツール</h1>
+  <p class="lead">定期購入、アプリ、保険以外の一般サービスなど、見直し日を忘れやすいものの確認メモを作ります。金額や契約の判断は扱いません。</p>
+  <nav class="nav" aria-label="関連ページ">
+    <a href="../categories/life-admin.html">生活管理へ</a>
+    <a href="../articles/paper-sorting-three-box-rule.html">書類整理の記事へ</a>
+    <a href="../tools/paper-label-maker.html">書類ラベル作成へ</a>
+  </nav>
+</header>
+<main class="tool-grid">
+  <section class="card input-panel" aria-labelledby="input-title">
+    <h2 id="input-title">入力</h2>
+    <label for="service">サービス名</label>
+    <input id="service" type="text" maxlength="40" placeholder="例: 動画サービス、定期便、アプリ">
+    <label for="renewal">次の更新時期</label>
+    <input id="renewal" type="text" maxlength="40" placeholder="例: 6月末、毎月25日、年1回">
+    <label for="owner">確認する人</label>
+    <input id="owner" type="text" maxlength="30" placeholder="例: 自分、家族で確認">
+    <label for="place">確認場所</label>
+    <select id="place">
+      <option value="家計メモ">家計メモ</option>
+      <option value="カレンダー">カレンダー</option>
+      <option value="メール検索">メール検索</option>
+      <option value="アプリ内設定">アプリ内設定</option>
+      <option value="書類トレー">書類トレー</option>
+    </select>
+    <div class="checks">
+      <label><input id="include_cancel" type="checkbox" checked> 解約方法の確認欄を入れる</label>
+      <label><input id="include_family" type="checkbox"> 家族確認の欄を入れる</label>
+    </div>
+    <div class="actions">
+      <button id="generate" type="button">メモを作る</button>
+      <button id="copy" type="button" class="secondary">コピー</button>
+      <button id="print" type="button" class="secondary">印刷</button>
+    </div>
+    <p id="status" class="small" aria-live="polite">ID、パスワード、カード番号、契約番号は入力しないでください。</p>
+  </section>
+  <section class="card" aria-labelledby="output-title">
+    <h2 id="output-title">出力</h2>
+    <div id="preview" class="memo-box"></div>
+    <label for="copy_text" class="no-print">コピペ用テキスト</label>
+    <textarea id="copy_text" readonly class="no-print"></textarea>
+    <p class="note">このページは一般的な更新メモを作るだけです。契約、解約、支払い、保険、税金、投資などの判断は、公式案内や専門家の案内を確認してください。</p>
+  </section>
+</main>
+<footer>
+  <p><a href="../index.html">トップへ戻る</a><a href="../privacy.html">プライバシー方針</a><a href="../disclaimer.html">免責事項</a></p>
+  <p>このツールはブラウザ内だけで動く静的ページです。入力内容は送信、保存されません。</p>
+</footer>
+<script>
+(function(){
+  'use strict';
+  function value(id){return document.getElementById(id).value.trim()}
+  function checked(id){return document.getElementById(id).checked}
+  function escapeHtml(text){return text.replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
+  function render(){
+    var service=value('service')||'サービス名を書く';
+    var renewal=value('renewal')||'次の更新時期を書く';
+    var owner=value('owner')||'確認する人を書く';
+    var place=value('place');
+    var lines=[
+      'サブスク更新メモ',
+      'サービス: '+service,
+      '次の更新時期: '+renewal,
+      '確認する人: '+owner,
+      '確認場所: '+place,
+      '確認すること:',
+      '- 今も使っているか',
+      '- 料金やプラン名を公式画面で確認したか',
+      '- 更新前に見直す日を決めたか'
+    ];
+    if(checked('include_cancel'))lines.push('- 解約方法や締切を公式案内で確認したか');
+    if(checked('include_family'))lines.push('- 家族や共有利用者に確認したか');
+    lines.push('メモ: 契約番号や支払い情報はここに書かない');
+    var html='<h2>'+escapeHtml(service)+'</h2><ul>';
+    lines.slice(2).forEach(function(line){
+      if(line==='確認すること:'){html+='</ul><h3>確認すること</h3><ul>'}
+      else if(line.indexOf('- ')===0){html+='<li>'+escapeHtml(line.slice(2))+'</li>'}
+      else{html+='<li>'+escapeHtml(line)+'</li>'}
+    });
+    html+='</ul>';
+    document.getElementById('preview').innerHTML=html;
+    document.getElementById('copy_text').value=lines.join('\\n');
+  }
+  function copyText(){
+    var target=document.getElementById('copy_text');
+    var status=document.getElementById('status');
+    if(!target.value)render();
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(target.value).then(function(){status.textContent='コピーしました。'}).catch(function(){target.focus();target.select();status.textContent='自動コピーできませんでした。テキスト欄を手動でコピーしてください。'})
+    }else{
+      target.focus();
+      target.select();
+      status.textContent='この環境では手動コピーを使ってください。';
+    }
+  }
+  document.getElementById('generate').addEventListener('click',render);
+  document.getElementById('copy').addEventListener('click',copyText);
+  document.getElementById('print').addEventListener('click',function(){window.print()});
+  render();
+})();
+</script>
 </body>
 </html>

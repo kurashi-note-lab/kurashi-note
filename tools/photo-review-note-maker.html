@@ -36,7 +36,7 @@
     <h2 id="input-title">入力</h2>
     <label for="month">対象月</label>
     <input id="month" type="text" maxlength="20" placeholder="例: 5月、2026年5月">
-    <label for="focus">今回いちばん見るもの</label>
+    <label for="focus">今月いちばん見るもの</label>
     <select id="focus">
       <option value="screenshots">スクリーンショット</option>
       <option value="documents">手続き控え・予約画面</option>
@@ -92,14 +92,14 @@
     if(checked('include_album'))steps.push('迷うものは「あらためて見る」アルバムに入れる');
     steps.push('残す理由を、思い出・記録・買い物・手続きに分ける');
     if(checked('include_delete'))steps.push('重複、ピンぼけ、期限切れだけを削除候補にする');
-    if(checked('include_next'))steps.push('次回見る日を1つ決める');
+    if(checked('include_next'))steps.push('次回見る日をひとつ決める');
     var title=month+'の写真見直しメモ';
     var html='<p class="meta">対象: '+month+' / 重点: '+focusNames[focus]+' / 目安: '+time+'分</p><div class="output-list">';
     steps.forEach(function(step){html+='<label><input type="checkbox"> '+step+'</label>'});
     html+='</div><p class="note">削除に迷う写真は残します。今日は分類を進めることを優先します。</p>';
     if(memo)html+='<p><strong>メモ:</strong> '+memo+'</p>';
     el('result').innerHTML=html;
-    el('copy_text').value=title+'\n重点: '+focusNames[focus]+'\n目安: '+time+'分\n\n'+steps.map(function(step,index){return (index+1)+'. '+step}).join('\n')+'\n\n削除に迷う写真は残す。'+(memo?'\n\nメモ: '+memo:'');
+    el('copy_text').value=title+'\\n重点: '+focusNames[focus]+'\\n目安: '+time+'分\\n\\n'+steps.map(function(step,index){return (index+1)+'. '+step}).join('\\n')+'\\n\\n削除に迷う写真は残す。'+(memo?'\\n\\nメモ: '+memo:'');
   }
   function copyText(){
     var target=el('copy_text');
