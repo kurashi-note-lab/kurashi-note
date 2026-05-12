@@ -99,7 +99,7 @@
     html+='</div><p class="note">削除に迷う写真は残します。今日は分類を進めることを優先します。</p>';
     if(memo)html+='<p><strong>メモ:</strong> '+memo+'</p>';
     el('result').innerHTML=html;
-    el('copy_text').value=title+'\\n重点: '+focusNames[focus]+'\\n目安: '+time+'分\\n\\n'+steps.map(function(step,index){return (index+1)+'. '+step}).join('\\n')+'\\n\\n削除に迷う写真は残す。'+(memo?'\\n\\nメモ: '+memo:'');
+    el('copy_text').value=title+'\n重点: '+focusNames[focus]+'\n目安: '+time+'分\n\n'+steps.map(function(step,index){return (index+1)+'. '+step}).join('\n')+'\n\n削除に迷う写真は残す。'+(memo?'\n\nメモ: '+memo:'');
   }
   function copyText(){
     var target=el('copy_text');
