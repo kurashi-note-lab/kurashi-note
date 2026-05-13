@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ja">
 <head>
   <meta charset="utf-8">
@@ -55,7 +55,7 @@
       <label><input id="include_delete" type="checkbox" checked> 削除候補を最後に確認する</label>
       <label><input id="include_next" type="checkbox" checked> 次回見る日を決める</label>
     </div>
-    <label for="memo">メモ 60文字以内（個人情報は入れない）</label>
+    <label for="memo">メモ 60文字以内</label>
     <input id="memo" type="text" maxlength="60" placeholder="例: 旅行写真は残す">
     <div class="actions">
       <button id="generate" type="button">メモを作る</button>
@@ -94,12 +94,12 @@
     if(checked('include_delete'))steps.push('重複、ピンぼけ、期限切れだけを削除候補にする');
     if(checked('include_next'))steps.push('次回見る日をひとつ決める');
     var title=month+'の写真見直しメモ';
-    var html='<p class="meta">対象: '+month+' / 重点: '+focusNames[focus]+' / 目安: '+time+'分</p><div class="output-list">';
+    var html='<p class="meta">対象: '+month+' / 重視: '+focusNames[focus]+' / 目安: '+time+'分</p><div class="output-list">';
     steps.forEach(function(step){html+='<label><input type="checkbox"> '+step+'</label>'});
     html+='</div><p class="note">削除に迷う写真は残します。今日は分類を進めることを優先します。</p>';
     if(memo)html+='<p><strong>メモ:</strong> '+memo+'</p>';
     el('result').innerHTML=html;
-    el('copy_text').value=title+'\n重点: '+focusNames[focus]+'\n目安: '+time+'分\n\n'+steps.map(function(step,index){return (index+1)+'. '+step}).join('\n')+'\n\n削除に迷う写真は残す。'+(memo?'\n\nメモ: '+memo:'');
+    el('copy_text').value=title+'\n重視: '+focusNames[focus]+'\n目安: '+time+'分\n\n'+steps.map(function(step,index){return (index+1)+'. '+step}).join('\n')+'\n\n削除に迷う写真は残す。'+(memo?'\n\nメモ: '+memo:'');
   }
   function copyText(){
     var target=el('copy_text');
