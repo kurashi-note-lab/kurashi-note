@@ -50,8 +50,8 @@
       <option value="書類トレー">書類トレー</option>
     </select>
     <div class="checks">
-      <label><input id="include_cancel" type="checkbox" checked> 公式案内を確認する欄を入れる</label>
-      <label><input id="include_family" type="checkbox"> 家族確認の欄を入れる</label>
+      <label><input id="include_cancel" type="checkbox" checked> 公式案内を確認する項目を入れる</label>
+      <label><input id="include_family" type="checkbox"> 家族確認の項目を入れる</label>
     </div>
     <div class="actions">
       <button id="generate" type="button">メモを作る</button>
@@ -75,8 +75,9 @@
 <script>
 (function(){
   'use strict';
-  function value(id){return document.getElementById(id).value.trim()}
-  function checked(id){return document.getElementById(id).checked}
+  function el(id){return document.getElementById(id)}
+  function value(id){return el(id).value.trim()}
+  function checked(id){return el(id).checked}
   function escapeHtml(text){return text.replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
   function render(){
     var service=value('service')||'サービス名を書く';
@@ -104,12 +105,12 @@
       else{html+='<li>'+escapeHtml(line)+'</li>'}
     });
     html+='</ul>';
-    document.getElementById('preview').innerHTML=html;
-    document.getElementById('copy_text').value=lines.join('\n');
+    el('preview').innerHTML=html;
+    el('copy_text').value=lines.join('\n');
   }
   function copyText(){
-    var target=document.getElementById('copy_text');
-    var status=document.getElementById('status');
+    var target=el('copy_text');
+    var status=el('status');
     if(!target.value)render();
     if(navigator.clipboard&&navigator.clipboard.writeText){
       navigator.clipboard.writeText(target.value).then(function(){status.textContent='コピーしました。'}).catch(function(){target.focus();target.select();status.textContent='自動コピーできませんでした。テキスト欄を手動でコピーしてください。'})
@@ -119,9 +120,9 @@
       status.textContent='この環境では手動コピーを使ってください。';
     }
   }
-  document.getElementById('generate').addEventListener('click',render);
-  document.getElementById('copy').addEventListener('click',copyText);
-  document.getElementById('print').addEventListener('click',function(){window.print()});
+  el('generate').addEventListener('click',render);
+  el('copy').addEventListener('click',copyText);
+  el('print').addEventListener('click',function(){window.print()});
   render();
 })();
 </script>
