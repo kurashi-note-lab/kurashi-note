@@ -50,7 +50,7 @@
       <option value="書類トレー">書類トレー</option>
     </select>
     <div class="checks">
-      <label><input id="include_cancel" type="checkbox" checked> 公式案内を確認する項目を入れる</label>
+      <label><input id="include_official" type="checkbox" checked> 公式案内を確認する項目を入れる</label>
       <label><input id="include_family" type="checkbox"> 家族確認の項目を入れる</label>
     </div>
     <div class="actions">
@@ -78,11 +78,12 @@
   function el(id){return document.getElementById(id)}
   function value(id){return el(id).value.trim()}
   function checked(id){return el(id).checked}
+  function clean(text){return text.replace(/[<>]/g,'').trim()}
   function escapeHtml(text){return text.replace(/[&<>"']/g,function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]})}
   function render(){
-    var service=value('service')||'サービス名を書く';
-    var renewal=value('renewal')||'次の更新時期を書く';
-    var owner=value('owner')||'確認する人を書く';
+    var service=clean(value('service'))||'サービス名を書く';
+    var renewal=clean(value('renewal'))||'次の更新時期を書く';
+    var owner=clean(value('owner'))||'確認する人を書く';
     var place=value('place');
     var lines=[
       'サブスク更新メモ',
@@ -91,11 +92,11 @@
       '確認する人: '+owner,
       '確認場所: '+place,
       '確認すること:',
-      '- 今も使っているか',
+      '- いまも使っているか',
       '- 料金やプラン名を公式画面で確認したか',
       '- 更新前に見直す日を決めたか'
     ];
-    if(checked('include_cancel'))lines.push('- 解約方法や締切を公式案内で確認したか');
+    if(checked('include_official'))lines.push('- 解約方法や条件を公式案内で確認したか');
     if(checked('include_family'))lines.push('- 家族や共有利用者に確認したか');
     lines.push('メモ: 契約番号や支払い情報はここに書かない');
     var html='<h2>'+escapeHtml(service)+'</h2><ul>';
